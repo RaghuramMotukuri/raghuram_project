@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <title>ఉత్సవ మిత్ర్ - UtsavaMitra</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    input, button { padding: 10px; font-size: 16px; margin: 10px; }
+    #response { margin-top: 20px; }
+    audio { margin: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🎉 ఉత్సవ మిత్ర్</h1>
+  <p><i>భారతీయ పండుగల గురించి అడగండి!</i></p>
+
+  <input type="text" id="query" placeholder="ఉదా: ఉగాది గురించి చెప్పండి" />
+  <button onclick="ask()">అడగండి</button>
+
+  <div id="response"></div>
+
+  <script>
+    async function ask() {
+      const input = document.getElementById("query");
+      const query = input.value.trim();
+      if (!query) return;
+
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: query })
+      }).then(r => r.json());
+
+      document.getElementById("response").innerHTML = `
+        <p><strong>ఉత్సవ మిత్ర్:</strong> ${res.text}</p>
+        <audio controls autoplay>
+          <source src="${res.audio}" type="audio/mpeg">
+          మీ బ్రౌజర్ ఆడియోను మద్దతు ఇవ్వడం లేదు.
+        </audio>
+      `;
+
+      input.value = ""; // Clear input
+    }
+
+    // Allow pressing Enter
+    document.getElementById("query").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") ask();
+    });
+  </script>
+</body>
+</html>
